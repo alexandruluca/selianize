@@ -86,7 +86,7 @@ export function emit(test, options = config, snapshot) {
         }
         _commands.push(c)
         _commands.push(
-          `timeNow = new Date().getTime(); took = timeNow - timeStart; times.push({name: '${commandName}', took}); timeStart = timeNow;`
+          `timeNow = new Date().getTime(); took = timeNow - timeStart; times.push({name: '${commandName}', took, unit: 'millisecond'}); timeStart = timeNow;`
         )
       })
 

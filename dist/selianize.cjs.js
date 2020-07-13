@@ -920,7 +920,7 @@ function emit$5(test, options = config, snapshot) {
 
         _commands.push(c);
 
-        _commands.push(`timeNow = new Date().getTime(); took = timeNow - timeStart; times.push({name: '${commandName}', took}); timeStart = timeNow;`);
+        _commands.push(`timeNow = new Date().getTime(); took = timeNow - timeStart; times.push({name: '${commandName}', took, unit: 'millisecond'}); timeStart = timeNow;`);
       });
 
       _commands.push(`require('fs').writeFileSync(require('path').join(process.cwd(), '..', '${testName}_execution_time.json'), JSON.stringify(times, null, 4));`);
