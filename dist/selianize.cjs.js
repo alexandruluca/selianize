@@ -545,7 +545,7 @@ function emitOpen(target) {
 }
 
 async function emitClick(target) {
-  return Promise.resolve(`await driver.wait(until.elementLocated(${await LocationEmitter.emit(target)}), configuration.timeout);await driver.findElement(${await LocationEmitter.emit(target)}).then(element => {return element.click();});`);
+  return Promise.resolve(`await driver.wait(until.elementLocated(${await LocationEmitter.emit(target)}), configuration.timeout);await driver.findElement(${await LocationEmitter.emit(target)}).then(element => {return driver.executeScript("arguments[0].click();", element);;});`);
 }
 
 async function emitDebugger() {
