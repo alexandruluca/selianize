@@ -297,7 +297,11 @@ async function emitClick(target) {
       target
     )}), configuration.timeout);await driver.findElement(${await LocationEmitter.emit(
       target
-    )}).then(element => {return driver.executeScript("arguments[0].click();", element);;});`
+    )}).then(element => {
+      return element.click().catch(err => {
+        return driver.executeScript("arguments[0].click();", element);
+      });
+    });`
   )
 }
 
