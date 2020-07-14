@@ -549,11 +549,15 @@ async function emitClick(target) {
               if(!numTries) {
                 return reject(err);
               }
-              retry(numTries--).then(resolve).catch(reject);
+              element.click().then(function() {
+                resolve();
+              }).catch(function() {
+                retry(--numTries).then(resolve).catch(reject);
+              });
             }, 1000);
           });
         };
-        retry(3);
+        return retry(3);
       });
     });`);
 }
