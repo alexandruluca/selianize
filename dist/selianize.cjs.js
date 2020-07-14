@@ -547,7 +547,17 @@ function emitOpen(target) {
 async function emitClick(target) {
   return Promise.resolve(`await driver.wait(until.elementLocated(${await LocationEmitter.emit(target)}), configuration.timeout);await driver.findElement(${await LocationEmitter.emit(target)}).then(element => {
       return element.click().catch(err => {
-        return driver.executeScript("arguments[0].click();", element);
+        const retry = function(numTries) {
+          return new Promise(function(resolve, reject) {
+            setTimeout(function() {
+              if(!numTries) {
+                return reject(err);
+              }
+              retry(numTries--).then(resolve).catch(reject);
+            }, 1000);
+          });
+        };
+        retry(3);
       });
     });`);
 }

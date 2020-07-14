@@ -299,7 +299,17 @@ async function emitClick(target) {
       target
     )}).then(element => {
       return element.click().catch(err => {
-        return driver.executeScript("arguments[0].click();", element);
+        const retry = function(numTries) {
+          return new Promise(function(resolve, reject) {
+            setTimeout(function() {
+              if(!numTries) {
+                return reject(err);
+              }
+              retry(numTries--).then(resolve).catch(reject);
+            }, 1000);
+          });
+        };
+        retry(3);
       });
     });`
   )
