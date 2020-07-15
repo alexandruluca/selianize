@@ -550,6 +550,7 @@ async function emitClick(target) {
         const retry = function(numTries) {
           return new Promise(function(resolve, reject) {
             setTimeout(function() {
+              element = driver.findElement(${await LocationEmitter.emit(target)});
               if(!numTries) {
                 return reject(err);
               }
@@ -561,7 +562,7 @@ async function emitClick(target) {
             }, 1000);
           });
         };
-        return retry(3);
+        return retry(5);
       });
     });`);
 }
