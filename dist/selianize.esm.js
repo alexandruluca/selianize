@@ -535,9 +535,18 @@ var CommandEmitter = {
   registerEmitter
 };
 
-function emitOpen(target) {
+async function emitOpen(target) {
   const url = /^(file|http|https):\/\//.test(target) ? `"${target}"` : `(new URL(\`${target}\`, BASE_URL)).href`;
-  return Promise.resolve(`await driver.get(${url});`);
+  let myScript = `let a = document.createElement('a');let linkText = document.createTextNode('$url');a.appendChild(linkText);a.title = '$url';a.href = '$url';document.body.appendChild(a);`;
+  let clickCmd = await emitClick('css=a');
+  return Promise.resolve(`
+    let url = ${url};
+    let page = await driver.get('about:blank');
+    let script = "${myScript}";
+    script = script.replace(/\\$url/g, url);
+    await driver.executeScript(script);
+    ${clickCmd};
+  `); //return Promise.resolve(`await driver.get(${url});`)
 }
 
 async function emitClick(target) {
@@ -901,16 +910,16 @@ function emit$5(test, options = config, snapshot) {
       if (options.silenceErrors) {
         return `throw new Error("${e.message}");`;
       } else {
-        errors.push(_objectSpread({
+        errors.push(_objectSpread(_objectSpread({
           index: index + 1
-        }, command, {
+        }, command), {}, {
           message: e
         }));
       }
     })));
 
     if (errors.length) {
-      rej(_objectSpread({}, test, {
+      rej(_objectSpread(_objectSpread({}, test), {}, {
         commands: errors
       }));
     }
@@ -1068,7 +1077,7 @@ var utils = {
  */
 
 function Selianize(project, _opts, snapshot = {}) {
-  const options = _objectSpread({}, config, {}, _opts);
+  const options = _objectSpread(_objectSpread({}, config), _opts);
 
   return new Promise(async (res, rej) => {
     // eslint-disable-line no-unused-vars
